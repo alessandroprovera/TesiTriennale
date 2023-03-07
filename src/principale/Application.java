@@ -27,13 +27,13 @@ public class Application {
 					 {40,22,33,50,43,0}};
 		TreeMap<Integer,Integer> dist = new TreeMap<Integer,Integer>();
 		dist.put(1, 4); dist.put(2, 10); dist.put(3, 12); dist.put(4, 18); dist.put(5, 6); dist.put(6, 14);
-		calcolaCosto(pi,t,r,s,dist);
+		System.out.println("\n\nIl costo totale di questa configurazione e: " +  calcolaCosto(pi,t,r,s,dist,c));
 	
 	}
 	
 	// funzione che calcola la funzione obiettivo
 	
-	public static int calcolaCosto(LinkedList<Integer> pi, int t, int r, int s, TreeMap<Integer,Integer> dist) {
+	public static int calcolaCosto(LinkedList<Integer> pi, int t, int r, int s, TreeMap<Integer,Integer> dist,int c[][]) {
 		
 		// calcolo i centri delle macchine in base a t e r,s
 		//divido le due file in base a t
@@ -59,18 +59,18 @@ public class Application {
 		}
 		
 		//calcolo i centri delle macchine di ogni fila
-		LinkedList<Integer> centri1 = new LinkedList<Integer>();
-		LinkedList<Integer> centri2 = new LinkedList<Integer>();
+		TreeMap<Integer,Integer> centri1 = new TreeMap<Integer,Integer>();
+		TreeMap<Integer,Integer> centri2 = new TreeMap<Integer,Integer>();
 		int k = r; // a che punto sono arrivato
 		for(Integer i: fila1) {
 			int centro = k + r + dist.get(i)/2;
 			k += dist.get(i);
-			centri1.add(centro);
+			centri1.put(i,centro);
 		}
 		
 		System.out.println("\n\nCentri:");
 		System.out.print("Fila 1: ");
-		for(Integer i: centri1){
+		for(Integer i: centri1.values()){
 			System.out.print(i + ", ");
 		}
 		
@@ -78,16 +78,60 @@ public class Application {
 		for(Integer i: fila2) {
 			int centro = k + s + dist.get(i)/2;
 			k += dist.get(i);
-			centri2.add(centro);
+			centri2.put(i,centro);
 		}
 		
 		System.out.print("\nFila 2: ");
-		for(Integer i: centri2){
+		for(Integer i: centri2.values()){
 			System.out.print(i + ", ");
 		}
 		
+		System.out.println("\n\nMatrice delle distanze:");
+		//calcolo le distanze in una matrice
+		// creo una mappa ordinata dei centri
+		TreeMap<Integer,Integer> centri = new TreeMap<Integer,Integer>();
+		centri.putAll(centri1);
+		centri.putAll(centri2);
+		int distance[][] = new int[centri.size()][centri.size()];
+		for(Integer i: centri.keySet()) {
+			for(Integer z: centri.keySet()) {
+				distance[i-1][z-1] = Math.abs(centri.get(i)-centri.get(z));
+				System.out.print(distance[i-1][z-1] + "\t");
+			}
+			System.out.print("\n");
+		}
 		
-		return 0;
+		//rendo la matrice delle distanze triangolare superiore
+		System.out.println("\n\nMatrice delle distanze triangolare superiore:");
+		for(Integer i: centri.keySet()) {
+			for(Integer z: centri.keySet()) {
+				if(i>z)
+					distance[i-1][z-1] = 0;
+				System.out.print(distance[i-1][z-1] + "\t");
+			}
+			System.out.print("\n");
+		}
+		
+		//rendo la matrice dei costi triangolare superiore
+				System.out.println("\n\nMatrice dei costi triangolare superiore:");
+				for(Integer i: centri.keySet()) {
+					for(Integer z: centri.keySet()) {
+						if(i>z)
+							c[i-1][z-1] = 0;
+						System.out.print(c[i-1][z-1] + "\t");
+					}
+					System.out.print("\n");
+				}
+		
+		//moltiplico la matrice delle distanze per quella dei costi
+		int fObiettivo = 0;
+		for(Integer i: centri.keySet()) {
+			for(Integer z: centri.keySet()) {
+				fObiettivo += distance[i-1][z-1]*c[i-1][z-1];
+			}
+		}
+		
+		return fObiettivo;
 	}
 
 }
