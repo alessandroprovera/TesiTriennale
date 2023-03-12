@@ -27,7 +27,10 @@ public class Application {
 					 {40,22,33,50,43,0}};
 		TreeMap<Integer,Integer> dist = new TreeMap<Integer,Integer>();
 		dist.put(1, 4); dist.put(2, 10); dist.put(3, 12); dist.put(4, 18); dist.put(5, 6); dist.put(6, 14);
-		System.out.println("\n\nIl costo totale di questa configurazione e: " +  calcolaCosto(pi,t,r,s,dist,c));
+		//System.out.println("\n\nIl costo totale di questa configurazione e: " +  calcolaCosto(pi,t,r,s,dist,c));
+		
+		System.out.println("Ottimizzo la configurazione:");
+		piOttimizzato(pi,c);
 	
 	}
 	
@@ -131,7 +134,65 @@ public class Application {
 			}
 		}
 		
+		// provo a scrivere l'algoritmo seguente per migliorare la funzione obiettivo.
+		// scorro tutta la matrice dei costi e identifico il costo maggiore
+		// una volta identificato pongo le due macchine che generano quel costo una davanti all'altra nella nuova configurazione
+		// procedo in questo modo (scegliendo sempre il costo maggiore) fino ad esaurimento delle coppie (implemento
+		// prima una versione per macchine pari)
+		
+		
 		return fObiettivo;
+	}
+	
+	public static LinkedList<Integer> piOttimizzato (LinkedList<Integer> pi,int c[][]){
+		 
+		// voglio identificare il massimo e la posizione della matrice dei costi
+		LinkedList<Integer> fila1 = new LinkedList<Integer>();
+		LinkedList<Integer> fila2 = new LinkedList<Integer>();
+		
+		//rendo la matrice dei costi triangolare superiore
+		for(int i = 0; i < pi.size(); i++) {
+			for(int j = 0; j < pi.size(); j++) {
+				if(i > j)
+					c[i][j] = 0;
+			}
+		}
+		
+		// siccome ad ogni ciclo assegno due macchine, ciclo pi.size/2 volte per assegnarle tutte
+		int k = 0;
+		while(k<(pi.size()/2)) {
+			
+			int max = 0;
+			LinkedList<Integer> massimiTrovati = new LinkedList<Integer>();
+			for(int i = 0; i < pi.size(); i++) {
+				for(int j = 0; j < pi.size(); j++) {
+					if(c[i][j] > max) {
+						max = c[i][j];
+						massimiTrovati.add(max);
+					}
+						
+				}
+			}
+			// riciclo e cerco il punto in cui ce quel massimo
+			for(int i = 0; i < pi.size(); i++) {
+				for(int j = 0; j < pi.size(); j++) {
+					if(c[i][j] == max) {
+						fila1.add(i+1);
+						fila2.add(j+1);
+					}
+						
+				}
+			}
+			k++;
+		}
+		System.out.println(fila1.toString());
+		System.out.println(fila2.toString());
+		
+		
+		
+		
+		
+		return null;
 	}
 
 }
