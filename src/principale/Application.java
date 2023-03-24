@@ -25,9 +25,16 @@ public class Application {
 					 {27,38,26,0,46,50},
 					 {36,41,29,46,0,43},
 					 {40,22,33,50,43,0}};
+		// faccio un'altra copia, poi dovrò duplicarla all'interno della funzione
+		int tempC[][] = {{0,30,25,27,36,40},
+						{30,0,36,38,41,22},
+						{25,36,0,26,29,33},
+						{27,38,26,0,46,50},
+						{36,41,29,46,0,43},
+						{40,22,33,50,43,0}};
 		TreeMap<Integer,Integer> dist = new TreeMap<Integer,Integer>();
 		dist.put(1, 4); dist.put(2, 10); dist.put(3, 12); dist.put(4, 18); dist.put(5, 6); dist.put(6, 14);
-		//System.out.println("\n\nIl costo totale di questa configurazione e: " +  calcolaCosto(pi,t,r,s,dist,c));
+		System.out.println("\n\nIl costo totale di questa configurazione e: " +  calcolaCosto(pi,t,r,s,dist,c));
 		
 		System.out.println("Ottimizzo la configurazione:");
 		piOttimizzato(pi,c);
@@ -40,7 +47,10 @@ public class Application {
 		
 		// calcolo i centri delle macchine in base a t e r,s
 		//divido le due file in base a t
-		LinkedList<Integer> tempPi = pi;
+		LinkedList<Integer> tempPi = new LinkedList<Integer>();
+		for(Integer integer: pi) {
+			tempPi.add(integer);
+		}
 		LinkedList<Integer> fila1 = new LinkedList<Integer>();
 		LinkedList<Integer> fila2 = new LinkedList<Integer>();
 		int j=0;
@@ -115,15 +125,16 @@ public class Application {
 			System.out.print("\n");
 		}
 		
+		
 		//rendo la matrice dei costi triangolare superiore
-				System.out.println("\n\nMatrice dei costi triangolare superiore:");
-				for(Integer i: centri.keySet()) {
-					for(Integer z: centri.keySet()) {
-						if(i>z)
-							c[i-1][z-1] = 0;
-						System.out.print(c[i-1][z-1] + "\t");
-					}
-					System.out.print("\n");
+		System.out.println("\n\nMatrice dei costi triangolare superiore:");
+		for(Integer i: centri.keySet()) {
+			for(Integer z: centri.keySet()) {
+				if(i>z)
+					c[i-1][z-1] = 0;
+					System.out.print(c[i-1][z-1] + "\t");
+				}
+				System.out.print("\n");
 				}
 		
 		//moltiplico la matrice delle distanze per quella dei costi
@@ -150,13 +161,7 @@ public class Application {
 		LinkedList<Integer> fila1 = new LinkedList<Integer>();
 		LinkedList<Integer> fila2 = new LinkedList<Integer>();
 		
-		//rendo la matrice dei costi triangolare superiore
-		for(int i = 0; i < pi.size(); i++) {
-			for(int j = 0; j < pi.size(); j++) {
-				if(i > j)
-					c[i][j] = 0;
-			}
-		}
+		//ricordiamoci che la matrice c è gia triangolare superiore
 		
 		// siccome ad ogni ciclo assegno due macchine, ciclo pi.size/2 volte per assegnarle tutte
 		int k = 0;
@@ -166,7 +171,7 @@ public class Application {
 			LinkedList<Integer> massimiTrovati = new LinkedList<Integer>();
 			for(int i = 0; i < pi.size(); i++) {
 				for(int j = 0; j < pi.size(); j++) {
-					if(c[i][j] > max) {
+					if(c[i][j] > max && !massimiTrovati.contains(c[i][j])) {
 						max = c[i][j];
 						massimiTrovati.add(max);
 					}
