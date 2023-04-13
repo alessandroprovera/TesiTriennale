@@ -41,10 +41,12 @@ public class Istanza4MacchineOttimizzata {
 					 {0,0,0,0}};
 		
 		
-		System.out.println("Genero la soluzione INIZIALE data l'istanza inserita\n");
-		System.out.println("La configurazione della soluzione INIZIALE e: " + piSolIniziale(pi,c).toString());
+		System.out.println("Genero la soluzione INIZIALE data l'istanza inserita " + pi.toString() + ": " + calcolaCosto(pi,c));
+		System.out.println("\nLa configurazione della soluzione INIZIALE e: " + piSolIniziale(pi,c).toString());
 		System.out.println("Il costo totale della soluzione INIZIALE e: " +  calcolaCosto(piSolIniziale(pi,c),c));
-		piOttimizzatoRicercaLocale(pi,c);
+		System.out.println("\nLa configurazione della soluzione OTTIMIZZATA e: " + piOttimizzatoRicercaLocale(pi,c));
+		System.out.println("Il costo totale della soluzione OTTIMIZZATA e: " + calcolaCosto(piOttimizzatoRicercaLocale(pi,c),c));
+		
 	
 	}
 	
@@ -120,7 +122,7 @@ public class Istanza4MacchineOttimizzata {
 	
 	public static LinkedList<Integer> piSolIniziale (LinkedList<Integer> pi,int c[][]){
 		 
-		// provo a scrivere l'algoritmo seguente per migliorare la funzione obiettivo.
+		// provo a scrivere l'algoritmo seguente per generare la soluzione iniziale.
 				// scorro tutta la matrice dei costi e identifico il costo maggiore
 				// una volta identificato pongo le due macchine che generano quel costo una davanti all'altra nella nuova configurazione
 				// procedo in questo modo (scegliendo sempre il costo maggiore) fino ad esaurimento delle coppie (implemento
@@ -170,25 +172,31 @@ public class Istanza4MacchineOttimizzata {
 		}
 		
 		//per ogni coppia di indici i,j calcolo la funzione obiettivo
-		int max = 0;
+		int min;
 		LinkedList<Integer> daRestituire = new LinkedList<Integer>();
 		Map<LinkedList<Integer>,Integer> mappaSoluzioni = new HashMap<LinkedList<Integer>,Integer>();
 		for(int i = 0; i< pi.size(); i++) {
-			for(int j=0; j<pi.size();j++) {
-				Collections.swap(tempPi, i, j);
-				int costo = calcolaCosto(tempPi,c);
-				mappaSoluzioni.put(tempPi, costo);
-				System.out.println(tempPi.toString() + ": " + costo);
+			for(int j = 0; j<pi.size();j++) {
+				if(i!=j) {
+					Collections.swap(tempPi, i, j);
+					int costo = calcolaCosto(tempPi,c);
+					LinkedList<Integer> daCopiare = new LinkedList<Integer>();
+					for(Integer k: tempPi) {
+						daCopiare.add(k);
+					}
+					mappaSoluzioni.put(daCopiare, costo);
+				}
 			}
 		}
+		min = mappaSoluzioni.get(tempPi);
+		daRestituire = tempPi;
 		for(LinkedList<Integer> config: mappaSoluzioni.keySet()) {
-			if(mappaSoluzioni.get(config) > max) {
-				max = mappaSoluzioni.get(config);
+			if(mappaSoluzioni.get(config) < min) {
+				min = mappaSoluzioni.get(config);
 				daRestituire = config;
 			}	
 		}
-		System.out.println(daRestituire.toString() + max);
-		return null;
+		return daRestituire;
 	}
 
 }
