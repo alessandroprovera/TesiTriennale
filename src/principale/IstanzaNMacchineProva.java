@@ -14,7 +14,7 @@ public class IstanzaNMacchineProva {
 	// t: intero che dice quante macchine stanno sulla riga 1
 	// r,s interi che indicano l'offset di partenza (uno dei due sta a 0)
 	// setto t,r,s come costanti
-	final static int N = 50;
+	final static int N = 6;
 	final static int seed = 0;
 	final static int t = N/2;
 	final static int r = 0;
@@ -70,7 +70,7 @@ public class IstanzaNMacchineProva {
 		
 		long start = System.nanoTime();
 		LinkedList<Integer> soluzioneOttimizzata = new LinkedList<Integer>();
-		for(Integer i: piOttimizzatoRicercaLocale(pi,c)) {
+		for(Integer i: ricercaLocale(c)) {
 			soluzioneOttimizzata.add(i);
 		}
 		System.out.println("\nLa configurazione della soluzione OTTIMIZZATA e: " + soluzioneOttimizzata);
@@ -194,40 +194,41 @@ public class IstanzaNMacchineProva {
 		return configurazioneOttimizzata;
 	}
 	
-	public static LinkedList<Integer> piOttimizzatoRicercaLocale(LinkedList<Integer> pi,int c[][]){
+	
+	static int costoBest = 1000000000;
+	static LinkedList<Integer> soluzioneBest = new LinkedList<Integer>();
+	
+	public static LinkedList<Integer> ricercaLocale(int c[][]){
+		LinkedList<Integer> parziale = new LinkedList<Integer>();
+		cerca(parziale,c,1);
+		return soluzioneBest;
+	}
+	
+	public static boolean cerca(LinkedList<Integer> parziale, int c[][], int livello) {
 		
-		// creo una variabile di lavoro tempPi con gli stessi elementi di pi
-		LinkedList<Integer> tempPi = new LinkedList<Integer>();
-		for(Integer integer: pi) {
-			tempPi.add(integer);
+		//terminazione
+		if(parziale.size() == N) {
+			if(calcolaCosto(parziale,c) < costoBest) {
+				costoBest = calcolaCosto(parziale,c);
+				soluzioneBest.clear();
+				for(Integer j: parziale) {
+					soluzioneBest.add(j);
+				}
+				
+			}
+			return true;
 		}
 		
-		//per ogni coppia di indici i,j calcolo la funzione obiettivo
-		int min;
-		LinkedList<Integer> daRestituire = new LinkedList<Integer>();
-		Map<LinkedList<Integer>,Integer> mappaSoluzioni = new HashMap<LinkedList<Integer>,Integer>();
-		for(int i = 0; i< pi.size(); i++) {
-			for(int j = 0; j<pi.size();j++) {
-				if(i!=j) {
-					Collections.swap(tempPi, i, j);
-					int costo = calcolaCosto(tempPi,c);
-					LinkedList<Integer> daCopiare = new LinkedList<Integer>();
-					for(Integer k: tempPi) {
-						daCopiare.add(k);
-					}
-					mappaSoluzioni.put(daCopiare, costo);
-				}
+		for(int i=1; i<=N; i++) {
+			if(!parziale.contains(i)) {
+				parziale.add(i);
+				cerca(parziale,c,livello+1);
+				parziale.remove(parziale.size()-1);
 			}
 		}
-		min = mappaSoluzioni.get(tempPi);
-		daRestituire = tempPi;
-		for(LinkedList<Integer> config: mappaSoluzioni.keySet()) {
-			if(mappaSoluzioni.get(config) < min) {
-				min = mappaSoluzioni.get(config);
-				daRestituire = config;
-			}	
-		}
-		return daRestituire;
+		
+		return false;
+		
 	}
 
 	public static List<Integer> generaNumeriRandom(long seed, int start, int stop, int l){
@@ -244,4 +245,30 @@ public class IstanzaNMacchineProva {
 		
 		
 	}
+	
+	/*
+	 * public static LinkedList<Integer>
+	 * piOttimizzatoRicercaLocale(LinkedList<Integer> pi,int c[][]){
+	 * 
+	 * // creo una variabile di lavoro tempPi con gli stessi elementi di pi
+	 * LinkedList<Integer> tempPi = new LinkedList<Integer>(); for(Integer integer:
+	 * pi) { tempPi.add(integer); }
+	 * 
+	 * //per ogni coppia di indici i,j calcolo la funzione obiettivo int min;
+	 * LinkedList<Integer> daRestituire = new LinkedList<Integer>();
+	 * Map<LinkedList<Integer>,Integer> mappaSoluzioni = new
+	 * HashMap<LinkedList<Integer>,Integer>();
+	 * 
+	 * 
+	 * 
+	 * 
+	 * for(int i = 0; i< pi.size(); i++) { for(int j = 0; j<pi.size();j++) {
+	 * if(i!=j) { Collections.swap(tempPi, i, j); int costo =
+	 * calcolaCosto(tempPi,c); LinkedList<Integer> daCopiare = new
+	 * LinkedList<Integer>(); for(Integer k: tempPi) { daCopiare.add(k); }
+	 * mappaSoluzioni.put(daCopiare, costo); } } } min = mappaSoluzioni.get(tempPi);
+	 * daRestituire = tempPi; for(LinkedList<Integer> config:
+	 * mappaSoluzioni.keySet()) { if(mappaSoluzioni.get(config) < min) { min =
+	 * mappaSoluzioni.get(config); daRestituire = config; } } return daRestituire; }
+	 */
 }
