@@ -9,12 +9,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-public class Istanza50MacchineProva {
+public class IstanzaNMacchineProva {
 	
 	// t: intero che dice quante macchine stanno sulla riga 1
 	// r,s interi che indicano l'offset di partenza (uno dei due sta a 0)
 	// setto t,r,s come costanti
-	final static int t = 25;
+	final static int N = 50;
+	final static int seed = 0;
+	final static int t = N/2;
 	final static int r = 0;
 	final static int s = 1;
 	
@@ -23,7 +25,7 @@ public class Istanza50MacchineProva {
 	    static {
 	    	dimensioniMacchine = new HashMap<>();
 	    	List<Integer> daRiempire = new ArrayList<Integer>();
-	    	daRiempire = generaNumeriRandom(0,2,10,50);
+	    	daRiempire = generaNumeriRandom(seed,2,10,N);
 	    	int cnt = 1;
 	    	for(int i: daRiempire) {
 	    		dimensioniMacchine.put(cnt,i*2);
@@ -39,16 +41,16 @@ public class Istanza50MacchineProva {
 		
 		LinkedList<Integer> pi = new LinkedList<Integer>();
 		// ordine delle macchine
-		for(int i=1; i<=50; i++) {
+		for(int i=1; i<=N; i++) {
 			pi.add(i);
 		}
 		// setto la matrice dei costi triangolare superiore
-		int c[][] = new int[50][50];
+		int c[][] = new int[N][N];
 		List<Integer> costiRandom = new ArrayList<Integer>();
-		costiRandom = generaNumeriRandom(0,20,50,(50*50)/2);
+		costiRandom = generaNumeriRandom(seed,20,50,(N*N)/2);
 		int k=0;
-		for(int i=0; i<50; i++) {
-			for(int j=0; j<50; j++) {
+		for(int i=0; i<N; i++) {
+			for(int j=0; j<N; j++) {
 				if(j>i) {
 					c[i][j] = costiRandom.get(k);
 					k++;
