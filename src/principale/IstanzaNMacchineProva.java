@@ -60,14 +60,22 @@ public class IstanzaNMacchineProva {
 		}
 		
 		System.out.println("Genero la soluzione INIZIALE data l'istanza inserita " + pi.toString() + ": " + calcolaCosto(pi,c));
-		System.out.println("\nLa configurazione della soluzione INIZIALE e: " + piSolIniziale(pi,c).toString());
-		System.out.println("Il costo totale della soluzione INIZIALE e: " +  calcolaCosto(piSolIniziale(pi,c),c));
+		LinkedList<Integer> soluzioneIniziale = new LinkedList<Integer>();
+		for(Integer i: piSolIniziale(pi,c)) {
+			soluzioneIniziale.add(i);
+		}
+		System.out.println("\nLa configurazione della soluzione INIZIALE e: " + soluzioneIniziale.toString());
+		System.out.println("Il costo totale della soluzione INIZIALE e: " +  calcolaCosto(soluzioneIniziale,c));
 		
 		
 		long start = System.nanoTime();
-		System.out.println("\nLa configurazione della soluzione OTTIMIZZATA e: " + piOttimizzatoRicercaLocale(pi,c));
+		LinkedList<Integer> soluzioneOttimizzata = new LinkedList<Integer>();
+		for(Integer i: piOttimizzatoRicercaLocale(pi,c)) {
+			soluzioneOttimizzata.add(i);
+		}
+		System.out.println("\nLa configurazione della soluzione OTTIMIZZATA e: " + soluzioneOttimizzata);
 		long stop = System.nanoTime();
-		System.out.println("Il costo totale della soluzione OTTIMIZZATA e: " + calcolaCosto(piOttimizzatoRicercaLocale(pi,c),c));
+		System.out.println("Il costo totale della soluzione OTTIMIZZATA e: " + calcolaCosto(soluzioneOttimizzata,c));
 		System.out.println("Il tempo totale della soluzione OTTIMIZZATA e: " + (stop-start)/1000000000.0 + " secondi");
 	
 	}
