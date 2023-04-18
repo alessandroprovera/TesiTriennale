@@ -152,7 +152,7 @@ public class IstanzaNMacchineProva {
 	
 	public static LinkedList<Integer> piSolIniziale (LinkedList<Integer> pi,int c[][]){
 		 
-		// provo a scrivere l'algoritmo seguente per generare la soluzione iniziale.
+				// provo a scrivere l'algoritmo seguente per generare la soluzione iniziale.
 				// scorro tutta la matrice dei costi e identifico il costo maggiore
 				// una volta identificato pongo le due macchine che generano quel costo una davanti all'altra nella nuova configurazione
 				// procedo in questo modo (scegliendo sempre il costo maggiore) fino ad esaurimento delle coppie (implemento
@@ -183,13 +183,17 @@ public class IstanzaNMacchineProva {
 			posMacchineAssegnate.add(posJMax);
 			fila1.add(posIMax+1);
 			fila2.add(posJMax+1);
-
+		
 			k++;
 		}
 		
 		LinkedList<Integer> configurazioneOttimizzata = new LinkedList<Integer>();
 		configurazioneOttimizzata.addAll(fila1);
 		configurazioneOttimizzata.addAll(fila2);
+		for(Integer z: pi) {
+			if(!configurazioneOttimizzata.contains(z))
+				configurazioneOttimizzata.add(z);
+		}
 		
 		return configurazioneOttimizzata;
 	}
