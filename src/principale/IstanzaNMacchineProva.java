@@ -14,7 +14,8 @@ public class IstanzaNMacchineProva {
 	// t: intero che dice quante macchine stanno sulla riga 1
 	// r,s interi che indicano l'offset di partenza (uno dei due sta a 0)
 	// setto t,r,s come costanti
-	final static int N = 50;
+	final static int N = 70;
+	final static int TIME_LIMIT = 30;
 	final static int seed = 0;
 	final static int t = N/2;
 	final static int r = 0;
@@ -68,7 +69,7 @@ public class IstanzaNMacchineProva {
 		
 		long start = System.nanoTime();
 		LinkedList<Integer> soluzioneOttimizzata = new LinkedList<Integer>();
-		for(Integer i: piOttimizzatoRicercaLocale(pi,c)) {
+		for(Integer i: piOttimizzatoRicercaLocale(pi,c,start)) {
 			soluzioneOttimizzata.add(i);
 		}
 		System.out.println("\nsoluzione 1 iniziale/ricerca locale");
@@ -78,7 +79,7 @@ public class IstanzaNMacchineProva {
 		
 		long start2 = System.nanoTime();
 		LinkedList<Integer> soluzioneOttimizzata2 = new LinkedList<Integer>();
-		for(Integer i: piOttimizzatoRicercaLocale(soluzioneIniziale,c)) {
+		for(Integer i: piOttimizzatoRicercaLocale(soluzioneIniziale,c,start2)) {
 			soluzioneOttimizzata2.add(i);
 		}
 		System.out.println("\nsoluzione 2 mio algoritmo/ricerca locale");
@@ -258,7 +259,7 @@ public class IstanzaNMacchineProva {
 	}
 	
 	
-	public static LinkedList<Integer> piOttimizzatoRicercaLocale(LinkedList<Integer> pi,int c[][]){
+	public static LinkedList<Integer> piOttimizzatoRicercaLocale(LinkedList<Integer> pi,int c[][], long tStart){
 		
 		LinkedList<Integer> solCorrente = new LinkedList<Integer>();
 		LinkedList<Integer> solBest = new LinkedList<Integer>();
@@ -276,6 +277,10 @@ public class IstanzaNMacchineProva {
 			Map<LinkedList<Integer>,Integer> confScambiate = new HashMap<LinkedList<Integer>,Integer>();
 			for(int i = 0; i < pi.size()-1; i++) {
 				for(int j = i+1; j < pi.size();j++) {
+					
+					//check TIME LIMIT
+					if((System.nanoTime() - tStart)/1000000000.0 > TIME_LIMIT)
+						return solBest;
 					
 					LinkedList<Integer> daScambiare = new LinkedList<Integer>();
 					for(Integer k: solCorrente) {
