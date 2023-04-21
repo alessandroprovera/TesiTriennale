@@ -14,7 +14,7 @@ public class IstanzaNMacchineProva {
 	// t: intero che dice quante macchine stanno sulla riga 1
 	// r,s interi che indicano l'offset di partenza (uno dei due sta a 0)
 	// setto t,r,s come costanti
-	final static int N = 6;
+	final static int N = 20;
 	final static int seed = 0;
 	final static int t = N/2;
 	final static int r = 0;
@@ -59,25 +59,32 @@ public class IstanzaNMacchineProva {
 			}
 		}
 		
-		System.out.println("Genero la soluzione INIZIALE data l'istanza inserita " + pi.toString() + ": " + calcolaCosto(pi,c));
+		System.out.println("soluzione 1 iniziale " + pi.toString() + ": " + calcolaCosto(pi,c));
 		LinkedList<Integer> soluzioneIniziale = new LinkedList<Integer>();
 		for(Integer i: piSolIniziale(pi,c)) {
 			soluzioneIniziale.add(i);
 		}
-		System.out.println("\nLa configurazione della soluzione INIZIALE e: " + soluzioneIniziale.toString());
-		System.out.println("Il costo totale della soluzione INIZIALE e: " +  calcolaCosto(soluzioneIniziale,c));
-		
+		System.out.println("soluzione 2 mio algoritmo " + soluzioneIniziale.toString() + ": " + calcolaCosto(soluzioneIniziale,c));
 		
 		long start = System.nanoTime();
 		LinkedList<Integer> soluzioneOttimizzata = new LinkedList<Integer>();
-		for(Integer i: ricercaLocale(c)) {
+		for(Integer i: piOttimizzatoRicercaLocale(pi,c)) {
 			soluzioneOttimizzata.add(i);
 		}
-		System.out.println("\nLa configurazione della soluzione OTTIMIZZATA e: " + soluzioneOttimizzata);
+		System.out.println("\nsoluzione 1 iniziale/ricerca locale");
+		System.out.println("soluzione " + soluzioneOttimizzata + ": " + calcolaCosto(soluzioneOttimizzata,c));
 		long stop = System.nanoTime();
-		System.out.println("Il costo totale della soluzione OTTIMIZZATA e: " + calcolaCosto(soluzioneOttimizzata,c));
-		System.out.println("Il tempo totale della soluzione OTTIMIZZATA e: " + (stop-start)/1000000000.0 + " secondi");
-	
+		System.out.println("tempo " + (stop-start)/1000000000.0 + " secondi");
+		
+		long start2 = System.nanoTime();
+		LinkedList<Integer> soluzioneOttimizzata2 = new LinkedList<Integer>();
+		for(Integer i: piOttimizzatoRicercaLocale(soluzioneIniziale,c)) {
+			soluzioneOttimizzata2.add(i);
+		}
+		System.out.println("\nsoluzione 2 mio algoritmo/ricerca locale");
+		System.out.println("soluzione " + soluzioneOttimizzata2 + ": " + calcolaCosto(soluzioneOttimizzata2,c));
+		long stop2 = System.nanoTime();
+		System.out.println("tempo " + (stop2-start2)/1000000000.0 + " secondi");
 	}
 	
 	// funzione che calcola la funzione obiettivo data un istanza del problema, 
@@ -86,7 +93,7 @@ public class IstanzaNMacchineProva {
 	public static int calcolaCosto(LinkedList<Integer> pi, int c[][]) {
 		
 		// calcolo i centri delle macchine in base a t e r,s
-		//divido le due file in base a t
+		// divido le due file in base a t
 		// creo una variabile di lavoro tempPi con gli stessi elementi di pi
 		LinkedList<Integer> tempPi = new LinkedList<Integer>();
 		for(Integer integer: pi) {
@@ -250,29 +257,51 @@ public class IstanzaNMacchineProva {
 		
 	}
 	
-	/*
-	 * public static LinkedList<Integer>
-	 * piOttimizzatoRicercaLocale(LinkedList<Integer> pi,int c[][]){
-	 * 
-	 * // creo una variabile di lavoro tempPi con gli stessi elementi di pi
-	 * LinkedList<Integer> tempPi = new LinkedList<Integer>(); for(Integer integer:
-	 * pi) { tempPi.add(integer); }
-	 * 
-	 * //per ogni coppia di indici i,j calcolo la funzione obiettivo int min;
-	 * LinkedList<Integer> daRestituire = new LinkedList<Integer>();
-	 * Map<LinkedList<Integer>,Integer> mappaSoluzioni = new
-	 * HashMap<LinkedList<Integer>,Integer>();
-	 * 
-	 * 
-	 * 
-	 * 
-	 * for(int i = 0; i< pi.size(); i++) { for(int j = 0; j<pi.size();j++) {
-	 * if(i!=j) { Collections.swap(tempPi, i, j); int costo =
-	 * calcolaCosto(tempPi,c); LinkedList<Integer> daCopiare = new
-	 * LinkedList<Integer>(); for(Integer k: tempPi) { daCopiare.add(k); }
-	 * mappaSoluzioni.put(daCopiare, costo); } } } min = mappaSoluzioni.get(tempPi);
-	 * daRestituire = tempPi; for(LinkedList<Integer> config:
-	 * mappaSoluzioni.keySet()) { if(mappaSoluzioni.get(config) < min) { min =
-	 * mappaSoluzioni.get(config); daRestituire = config; } } return daRestituire; }
-	 */
+	
+	public static LinkedList<Integer> piOttimizzatoRicercaLocale(LinkedList<Integer> pi,int c[][]){
+		
+		LinkedList<Integer> solCorrente = new LinkedList<Integer>();
+		LinkedList<Integer> solBest = new LinkedList<Integer>();
+		int minBest = calcolaCosto(pi,c);
+		
+		//inizializzo solCorrente come una copia di pi
+		for(Integer integer: pi) {
+			solCorrente.add(integer);
+		}
+		
+		boolean miglioramento;
+		
+		do {
+			miglioramento = false;
+			Map<LinkedList<Integer>,Integer> confScambiate = new HashMap<LinkedList<Integer>,Integer>();
+			for(int i = 0; i < pi.size()-1; i++) {
+				for(int j = i+1; j < pi.size();j++) {
+					
+					LinkedList<Integer> daScambiare = new LinkedList<Integer>();
+					for(Integer k: solCorrente) {
+						daScambiare.add(k);
+					}
+					Collections.swap(daScambiare, i, j);
+					int costo = calcolaCosto(daScambiare,c);
+					
+					confScambiate.put(daScambiare, costo);
+				}
+			}
+			for(LinkedList<Integer> conf: confScambiate.keySet()) {
+				if(confScambiate.get(conf) < minBest) {
+					miglioramento = true;
+					minBest = confScambiate.get(conf);
+					solBest.clear();
+					for(Integer p: conf) {
+						solBest.add(p);
+					}
+				}	
+			}
+			solCorrente.clear();
+			for(Integer o: solBest) {
+				solCorrente.add(o);
+			}
+		}while(miglioramento);
+		return solBest;
+	}
 }
