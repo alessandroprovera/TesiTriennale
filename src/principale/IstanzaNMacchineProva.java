@@ -14,8 +14,8 @@ public class IstanzaNMacchineProva {
 	// t: intero che dice quante macchine stanno sulla riga 1
 	// r,s interi che indicano l'offset di partenza (uno dei due sta a 0)
 	// setto t,r,s come costanti
-	final static int N = 70;
-	final static int TIME_LIMIT = 30;
+	final static int N = 100;
+	final static int TIME_LIMIT = 180;
 	final static int seed = 0;
 	final static int t = N/2;
 	final static int r = 0;
